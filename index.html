@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Lifestyle Balance Calculator for tracking sleep, hydration, exercise, nutrition, and screen time."
+  />
+  <title>Lifestyle Balance Calculator</title>
+  <style>
+    :root {
+      --background: #f3f7f4;
+      --card: rgba(255, 255, 255, 0.92);
+      --text: #17251f;
+      --muted: #66756d;
+      --primary: #276749;
+      --primary-dark: #1d5138;
+      --accent: #9bd4b3;
+      --border: #dbe8df;
+      --danger: #d95d5d;
+      --shadow: 0 20px 50px rgba(31, 76, 53, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #d9f2e1 0%, transparent 35%),
+        linear-gradient(135deg, #f7fbf8, var(--background));
+      padding: 24px;
+    }
+
+    .container {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin: 22px 0 30px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #dff3e6;
+      color: var(--primary-dark);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 5vw, 4rem);
+      line-height: 1.05;
+      margin-bottom: 12px;
+      letter-spacing: -0.05em;
+    }
+
+    header p {
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(219, 232, 223, 0.9);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .form-card {
+      padding: 28px;
+    }
+
+    .results-card {
+      padding: 28px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .card-title span {
+      font-size: 1.8rem;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 0.93rem;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 400;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fbfefc;
+      color: var(--text);
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(39, 103, 73, 0.12);
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .range-value {
+      min-width: 58px;
+      text-align: center;
+      background: #e8f5ec;
+      color: var(--primary-dark);
+      border-radius: 10px;
+      padding: 8px 7px;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary-btn {
+      flex: 1;
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 20px rgba(39, 103, 73, 0.2);
+    }
+
+    .primary-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary-btn {
+      background: #edf5ef;
+      color: var(--primary-dark);
+    }
+
+    .score-circle {
+      width: 190px;
+      height: 190px;
+      margin: 14px auto 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: conic-gradient(var(--primary) 0%, #e4eee7 0%);
+    }
+
+    .score-circle::before {
+      content: "";
+      position: absolute;
+      width: 144px;
+      height: 144px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .score-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .score-number {
+      display: block;
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--primary-dark);
+    }
+
+    .score-label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+
+    .result-message {
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .metric {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 11px;
+      border-radius: 13px;
+      background: #f4faf5;
+    }
+
+    .metric-icon {
+      font-size: 1.3rem;
+    }
+
+    .metric-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .metric-status {
+      color: var(--muted);
+      font-size: 0.76rem;
+      margin-top: 3px;
+    }
+
+    .metric-score {
+      font-weight: 900;
+      color: var(--primary-dark);
+    }
+
+    .tip-box {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 15px;
+      background: #fff8e5;
+      border: 1px solid #f3df9b;
+      color: #70571a;
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin: 28px 0 10px;
+    }
+
+    @media (max-width: 820px) {
+      body {
+        padding: 14px;
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .form-card,
+      .results-card {
+        padding: 20px;
+        border-radius: 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div class="badge">Daily wellness check</div>
+      <h1>Lifestyle Balance Calculator</h1>
+      <p>
+        Enter your daily habits to receive a simple wellness score across five
+        essential lifestyle areas.
+      </p>
+    </header>
+<section class="app-grid">
+  <div class="card form-card">
+    <div class="card-title">
+      <span>🌿</span>
+      <h2>Your daily habits</h2>
+    </div>
+
+    <p class="subtitle">
+      Use your average daily amounts for the most accurate result.
+    </p>
+
+    <form id="lifestyleForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="sleep">
+            Sleep
+            <span class="hint">hours per night</span>
+          </label>
+          <input
+            id="sleep"
+            type="number"
+            min="0"
+            max="24"
+            step="0.5"
+            value="7"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="water">
+            Water
+            <span class="hint">glasses per day</span>
+          </label>
+          <input
+            id="water"
+            type="number"
+            min="0"
+            max="30"
+            step="1"
+            value="6"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="exercise">
+            Exercise
+            <span class="hint">minutes per day</span>
+          </label>
+          <input
+            id="exercise"
+            type="number"
+            min="0"
+            max="300"
+            step="5"
+            value="30"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="screenTime">
+            Screen time
+            <span class="hint">recreational hours</span>
+          </label>
+          <input
+            id="screenTime"
+            type="number"
+            min="0"
+            max="24"
+            step="0.5"
+            value="4"
+            required
+          />
+        </div>
+
+        <div class="field full">
+          <label for="nutrition">
+            Nutrition quality
+            <span class="hint">how balanced your meals are</span>
+          </label>
+
+          <div class="range-row">
+            <input
+              id="nutrition"
+              type="range"
+              min="1"
+              max="5"
+              value="3"
+              step="1"
+            />
+            <span class="range-value" id="nutritionValue">3 / 5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="primary-btn" type="submit">
+          Calculate my score
+        </button>
+        <button class="secondary-btn" type="button" id="resetButton">
+          Reset
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <aside class="card results-card">
+    <div class="card-title">
+      <span>✨</span>
+      <h2>Your results</h2>
+    </div>
+
+    <div class="score-circle" id="scoreCircle">
+      <div class="score-content">
+        <span class="score-number" id="scoreNumber">0</span>
+        <span class="score-label">out of 100</span>
+      </div>
+    </div>
+
+    <p class="result-message" id="resultMessage">
+      Complete the form to see your lifestyle balance score.
+    </p>
+
+    <div class="breakdown">
+      <div class="metric">
+        <div class="metric-icon">😴</div>
+        <div>
+          <div class="metric-name">Sleep</div>
+          <div class="metric-status" id="sleepStatus">Not calculated</div>
+        </div>
+        <div class="metric-score" id="sleepScore">—</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">💧</div>
+        <div>
+          <div class="metric-name">Hydration</div>
+          <div class="metric-status" id="waterStatus">Not calculated</div>
+        </div>
+        <div class="metric-score" id="waterScore">—</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">🏃</div>
+        <div>
+          <div class="metric-name">Exercise</div>
+          <div class="metric-status" id="exerciseStatus">Not calculated</div>
+        </div>
+        <div class="metric-score" id="exerciseScore">—</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">🥗</div>
+        <div>
+          <div class="metric-name">Nutrition</div>
+          <div class="metric-status" id="nutritionStatus">Not calculated</div>
+        </div>
+        <div class="metric-score" id="nutritionScore">—</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-icon">📱</div>
+        <div>
+          <div class="metric-name">Screen balance</div>
+          <div class="metric-status" id="screenStatus">Not calculated</div>
+        </div>
+        <div class="metric-score" id="screenScore">—</div>
+      </div>
+    </div>
+
+    <div class="tip-box" id="tipBox">
+      💡 Small, consistent improvements can make a meaningful difference
+      over time.
+    </div>
+  </aside>
+</section>
+
+<footer>
+  This calculator is for general wellness information only and is not
+  medical advice.
+</footer>
+
+  </main>
+  <script>
+    const form = document.getElementById("lifestyleForm");
+    const resetButton = document.getElementById("resetButton");
+    const nutritionSlider = document.getElementById("nutrition");
+    const nutritionValue = document.getElementById("nutritionValue");
+    const scoreCircle = document.getElementById("scoreCircle");
+    const scoreNumber = document.getElementById("scoreNumber");
+    const resultMessage = document.getElementById("resultMessage");
+    const tipBox = document.getElementById("tipBox");
+
+    nutritionSlider.addEventListener("input", () => {
+      nutritionValue.textContent = `${nutritionSlider.value} / 5`;
+    });
+
+    function limitScore(value) {
+      return Math.max(0, Math.min(100, Math.round(value)));
+    }
+
+    function getStatus(score) {
+      if (score >= 85) return "Excellent";
+      if (score >= 70) return "Good";
+      if (score >= 50) return "Could improve";
+      return "Needs attention";
+    }
+
+    function sleepScore(hours) {
+      if (hours >= 7 && hours <= 9) return 100;
+      if (hours >= 6 && hours < 7) return 78;
+      if (hours > 9 && hours <= 10) return 82;
+      if (hours >= 5 && hours < 6) return 55;
+      if (hours > 10 && hours <= 12) return 60;
+      return 35;
+    }
+
+    function waterScore(glasses) {
+      return limitScore((glasses / 8) * 100);
+    }
+
+    function exerciseScore(minutes) {
+      return limitScore((minutes / 30) * 100);
+    }
+
+    function nutritionScore(rating) {
+      return limitScore((rating / 5) * 100);
+    }
+
+    function screenScore(hours) {
+      if (hours <= 2) return 100;
+      if (hours <= 4) return 82;
+      if (hours <= 6) return 65;
+      if (hours <= 8) return 45;
+      return 25;
+    }
+
+    function updateMetric(name, score) {
+      document.getElementById(`${name}Score`).textContent = `${score}`;
+      document.getElementById(`${name}Status`).textContent = getStatus(score);
+    }
+
+    function getOverallMessage(score) {
+      if (score >= 85) {
+        return "Excellent balance! Your daily habits are supporting a strong lifestyle foundation.";
+      }
+
+      if (score >= 70) {
+        return "Good work! You have a healthy foundation with a few areas that could become even stronger.";
+      }
+
+      if (score >= 50) {
+        return "You are making progress. Focus on improving one or two habits consistently.";
+      }
+
+      return "Start small and build momentum. Choose one lifestyle area to improve this week.";
+    }
+
+    function getTip(scores) {
+      const lowest = Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+
+      const tips = {
+        sleep: "💡 Try keeping a consistent bedtime and limiting caffeine late in the day.",
+        water: "💡 Keep a reusable water bottle nearby and drink a glass with each meal.",
+        exercise: "💡 Add a short walk, stretch, or bodyweight routine to your daily schedule.",
+        nutrition: "💡 Add more colorful fruits and vegetables to your meals.",
+        screen: "💡 Try taking regular screen breaks and keeping devices away before bed."
+      };
+
+      return tips[lowest];
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const sleep = Number(document.getElementById("sleep").value);
+      const water = Number(document.getElementById("water").value);
+      const exercise = Number(document.getElementById("exercise").value);
+      const screenTime = Number(document.getElementById("screenTime").value);
+      const nutrition = Number(document.getElementById("nutrition").value);
+
+      const scores = {
+        sleep: sleepScore(sleep),
+        water: waterScore(water),
+        exercise: exerciseScore(exercise),
+        nutrition: nutritionScore(nutrition),
+        screen: screenScore(screenTime)
+      };
+
+      const overall = Math.round(
+        (scores.sleep +
+          scores.water +
+          scores.exercise +
+          scores.nutrition +
+          scores.screen) /
+          5
+      );
+
+      updateMetric("sleep", scores.sleep);
+      updateMetric("water", scores.water);
+      updateMetric("exercise", scores.exercise);
+      updateMetric("nutrition", scores.nutrition);
+      updateMetric("screen", scores.screen);
+
+      scoreNumber.textContent = overall;
+      scoreCircle.style.background = `conic-gradient(
+        var(--primary) ${overall}%,
+        #e4eee7 ${overall}%
+      )`;
+
+      resultMessage.textContent = getOverallMessage(overall);
+      tipBox.textContent = getTip(scores);
+    });
+
+    resetButton.addEventListener("click", () => {
+      form.reset();
+      nutritionValue.textContent = "3 / 5";
+
+      scoreNumber.textContent = "0";
+      scoreCircle.style.background =
+        "conic-gradient(var(--primary) 0%, #e4eee7 0%)";
+
+      resultMessage.textContent =
+        "Complete the form to see your lifestyle balance score.";
+
+      tipBox.textContent =
+        "💡 Small, consistent improvements can make a meaningful difference over time.";
+
+      ["sleep", "water", "exercise", "nutrition", "screen"].forEach((name) => {
+        document.getElementById(`${name}Score`).textContent = "—";
+        document.getElementById(`${name}Status`).textContent = "Not calculated";
+      });
+    });
+  </script>
+</body>
+</html>
