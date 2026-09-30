@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta
     name="description"
-    content="Lifestyle Balance Calculator for tracking sleep, hydration, exercise, nutrition, and screen time."
+    content="Calculate your estimated monthly and yearly cost of living."
   />
-  <title>Lifestyle Balance Calculator</title>
+  <title>LifeStyle Cost Calculator</title>
   <style>
     :root {
-      --background: #f3f7f4;
-      --card: rgba(255, 255, 255, 0.92);
-      --text: #17251f;
-      --muted: #66756d;
-      --primary: #276749;
-      --primary-dark: #1d5138;
-      --accent: #9bd4b3;
-      --border: #dbe8df;
-      --danger: #d95d5d;
-      --shadow: 0 20px 50px rgba(31, 76, 53, 0.12);
+      --bg: #eef4f1;
+      --card: #ffffff;
+      --text: #17231d;
+      --muted: #6a776f;
+      --primary: #236947;
+      --primary-dark: #174c33;
+      --accent: #bfe8cc;
+      --border: #dce8e0;
+      --warning: #fff4cf;
+      --shadow: 0 18px 50px rgba(27, 75, 49, 0.12);
     }
 
     * {
@@ -33,168 +33,213 @@
       font-family: Inter, Arial, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, #d9f2e1 0%, transparent 35%),
-        linear-gradient(135deg, #f7fbf8, var(--background));
-      padding: 24px;
+        radial-gradient(circle at top left, #d3efdc, transparent 34%),
+        linear-gradient(135deg, #f8fcf9, var(--bg));
+      padding: 22px;
     }
 
     .container {
-      width: min(1100px, 100%);
-      margin: 0 auto;
+      width: min(1180px, 100%);
+      margin: auto;
     }
 
     header {
       text-align: center;
-      margin: 22px 0 30px;
+      margin: 24px auto 30px;
     }
 
     .badge {
       display: inline-block;
-      background: #dff3e6;
       color: var(--primary-dark);
-      padding: 8px 14px;
+      background: var(--accent);
       border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
+      padding: 8px 15px;
+      margin-bottom: 14px;
+      font-size: 0.78rem;
+      font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 14px;
     }
 
     h1 {
-      font-size: clamp(2.1rem, 5vw, 4rem);
-      line-height: 1.05;
-      margin-bottom: 12px;
-      letter-spacing: -0.05em;
+      font-size: clamp(2.2rem, 6vw, 4.4rem);
+      letter-spacing: -0.06em;
+      line-height: 1;
+      margin-bottom: 14px;
     }
 
     header p {
+      max-width: 700px;
+      margin: auto;
       color: var(--muted);
-      max-width: 620px;
-      margin: 0 auto;
       line-height: 1.6;
       font-size: 1.05rem;
     }
 
-    .app-grid {
+    .layout {
       display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
+      grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
       gap: 24px;
       align-items: start;
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid rgba(219, 232, 223, 0.9);
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--border);
       border-radius: 24px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
     }
 
     .form-card {
       padding: 28px;
     }
 
-    .results-card {
-      padding: 28px;
+    .summary-card {
       position: sticky;
-      top: 24px;
+      top: 22px;
+      padding: 28px;
     }
 
-    .card-title {
+    .section-heading {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 8px;
     }
 
-    .card-title span {
-      font-size: 1.8rem;
+    .section-heading span {
+      font-size: 1.7rem;
     }
 
     h2 {
       font-size: 1.35rem;
     }
 
-    .subtitle {
+    .description {
       color: var(--muted);
       line-height: 1.5;
+      margin-bottom: 23px;
+    }
+
+    .currency-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
       margin-bottom: 24px;
+      padding: 14px;
+      background: #f2f8f3;
+      border-radius: 14px;
     }
 
-    .form-grid {
+    .currency-row label {
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .currency-row select {
+      max-width: 180px;
+    }
+
+    .category {
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .category:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+    }
+
+    .category-title small {
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 0.8rem;
+    }
+
+    .options {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
     }
 
-    .field {
+    .option {
+      position: relative;
+    }
+
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .option label {
+      min-height: 70px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      font-weight: 700;
-      font-size: 0.93rem;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 400;
-    }
-
-    input,
-    select {
-      width: 100%;
+      justify-content: center;
+      gap: 4px;
+      padding: 12px 14px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fbfefc;
-      color: var(--text);
-      padding: 13px 14px;
-      font: inherit;
-      outline: none;
+      border-radius: 13px;
+      background: #fbfefb;
+      cursor: pointer;
       transition: 0.2s ease;
     }
 
-    input:focus,
-    select:focus {
+    .option label:hover {
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(39, 103, 73, 0.12);
+      transform: translateY(-1px);
     }
 
-    .range-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    input[type="range"] {
-      padding: 0;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-
-    .range-value {
-      min-width: 58px;
-      text-align: center;
-      background: #e8f5ec;
+    .option input:checked + label {
       color: var(--primary-dark);
-      border-radius: 10px;
-      padding: 8px 7px;
+      border-color: var(--primary);
+      background: #e8f6eb;
+      box-shadow: 0 0 0 3px rgba(35, 105, 71, 0.1);
+    }
+
+    .option-name {
       font-weight: 800;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
+    }
+
+    .option-price {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .option input:checked + label .option-price {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .custom-input {
+      width: 100%;
+      margin-top: 12px;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    .custom-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(35, 105, 71, 0.1);
     }
 
     .button-row {
       display: flex;
       gap: 12px;
-      margin-top: 26px;
+      margin-top: 25px;
     }
 
     button {
@@ -204,165 +249,146 @@
       font: inherit;
       font-weight: 800;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: 0.2s ease;
     }
 
     button:hover {
       transform: translateY(-2px);
     }
 
-    .primary-btn {
+    .calculate-button {
       flex: 1;
-      background: var(--primary);
       color: white;
-      box-shadow: 0 10px 20px rgba(39, 103, 73, 0.2);
+      background: var(--primary);
+      box-shadow: 0 10px 20px rgba(35, 105, 71, 0.2);
     }
 
-    .primary-btn:hover {
+    .calculate-button:hover {
       background: var(--primary-dark);
     }
 
-    .secondary-btn {
-      background: #edf5ef;
+    .reset-button {
       color: var(--primary-dark);
+      background: #eaf3ec;
     }
 
-    .score-circle {
-      width: 190px;
-      height: 190px;
-      margin: 14px auto 20px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      position: relative;
-      background: conic-gradient(var(--primary) 0%, #e4eee7 0%);
+    .summary-card h2 {
+      margin-bottom: 20px;
     }
 
-    .score-circle::before {
-      content: "";
-      position: absolute;
-      width: 144px;
-      height: 144px;
-      border-radius: 50%;
-      background: white;
-    }
-
-    .score-content {
-      position: relative;
-      z-index: 1;
+    .total-box {
       text-align: center;
+      padding: 24px 14px;
+      border-radius: 18px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #4b9a6e);
+      margin-bottom: 18px;
     }
 
-    .score-number {
+    .total-label {
       display: block;
-      font-size: 3rem;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--primary-dark);
-    }
-
-    .score-label {
-      color: var(--muted);
+      opacity: 0.85;
       font-size: 0.85rem;
-      margin-top: 5px;
+      margin-bottom: 7px;
     }
 
-    .result-message {
-      text-align: center;
-      color: var(--muted);
-      line-height: 1.5;
-      margin-bottom: 22px;
+    .total-amount {
+      display: block;
+      font-size: clamp(2.3rem, 5vw, 3.5rem);
+      line-height: 1;
+      font-weight: 900;
     }
 
-    .breakdown {
+    .total-year {
+      display: block;
+      margin-top: 9px;
+      opacity: 0.9;
+      font-size: 0.86rem;
+    }
+
+    .summary-list {
       display: flex;
       flex-direction: column;
-      gap: 13px;
-    }
-
-    .metric {
-      display: grid;
-      grid-template-columns: 34px 1fr auto;
       gap: 10px;
-      align-items: center;
-      padding: 11px;
-      border-radius: 13px;
-      background: #f4faf5;
-    }
-
-    .metric-icon {
-      font-size: 1.3rem;
-    }
-
-    .metric-name {
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
-
-    .metric-status {
-      color: var(--muted);
-      font-size: 0.76rem;
-      margin-top: 3px;
-    }
-
-    .metric-score {
-      font-weight: 900;
-      color: var(--primary-dark);
-    }
-
-    .tip-box {
       margin-top: 20px;
-      padding: 16px;
-      border-radius: 15px;
-      background: #fff8e5;
-      border: 1px solid #f3df9b;
-      color: #70571a;
-      line-height: 1.5;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
       font-size: 0.9rem;
+    }
+
+    .summary-line strong {
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .summary-note {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #f1dfa2;
+      border-radius: 14px;
+      background: var(--warning);
+      color: #705a1b;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .empty-message {
+      color: var(--muted);
+      line-height: 1.5;
+      text-align: center;
+      padding: 25px 5px;
     }
 
     footer {
       text-align: center;
       color: var(--muted);
-      font-size: 0.8rem;
-      margin: 28px 0 10px;
+      font-size: 0.78rem;
+      margin: 27px 0 10px;
     }
 
-    @media (max-width: 820px) {
-      body {
-        padding: 14px;
-      }
-
-      .app-grid {
+    @media (max-width: 880px) {
+      .layout {
         grid-template-columns: 1fr;
       }
 
-      .results-card {
+      .summary-card {
         position: static;
       }
     }
 
     @media (max-width: 560px) {
+      body {
+        padding: 13px;
+      }
+
       .form-card,
-      .results-card {
+      .summary-card {
         padding: 20px;
         border-radius: 18px;
       }
 
-      .form-grid {
+      .options {
         grid-template-columns: 1fr;
       }
 
-      .field.full {
-        grid-column: auto;
+      .currency-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .currency-row select {
+        max-width: none;
       }
 
       .button-row {
         flex-direction: column;
-      }
-
-      h1 {
-        font-size: 2.4rem;
       }
     }
   </style>
@@ -370,347 +396,699 @@
 <body>
   <main class="container">
     <header>
-      <div class="badge">Daily wellness check</div>
-      <h1>Lifestyle Balance Calculator</h1>
+      <div class="badge">Plan your lifestyle</div>
+      <h1>LifeStyle Cost Calculator</h1>
       <p>
-        Enter your daily habits to receive a simple wellness score across five
-        essential lifestyle areas.
+        Choose the options that match your lifestyle and estimate how much your
+        life could cost every month and every year.
       </p>
     </header>
-<section class="app-grid">
+<section class="layout">
   <div class="card form-card">
-    <div class="card-title">
-      <span>🌿</span>
-      <h2>Your daily habits</h2>
+    <div class="section-heading">
+      <span>🧮</span>
+      <h2>Choose your lifestyle</h2>
     </div>
 
-    <p class="subtitle">
-      Use your average daily amounts for the most accurate result.
+    <p class="description">
+      Select one option in every category. You can also enter your own
+      amount when the available choices do not fit your situation.
     </p>
 
-    <form id="lifestyleForm">
-      <div class="form-grid">
-        <div class="field">
-          <label for="sleep">
-            Sleep
-            <span class="hint">hours per night</span>
-          </label>
-          <input
-            id="sleep"
-            type="number"
-            min="0"
-            max="24"
-            step="0.5"
-            value="7"
-            required
-          />
-        </div>
+    <div class="currency-row">
+      <label for="currency">Currency</label>
+      <select id="currency">
+        <option value="$">USD ($)</option>
+        <option value="€">EUR (€)</option>
+        <option value="£">GBP (£)</option>
+        <option value="C$">CAD (C$)</option>
+        <option value="A$">AUD (A$)</option>
+      </select>
+    </div>
 
-        <div class="field">
-          <label for="water">
-            Water
-            <span class="hint">glasses per day</span>
-          </label>
-          <input
-            id="water"
-            type="number"
-            min="0"
-            max="30"
-            step="1"
-            value="6"
-            required
-          />
-        </div>
+    <form id="costForm">
+      <section class="category">
+        <h3 class="category-title">
+          🏠 Housing
+          <small>Where do you live?</small>
+        </h3>
 
-        <div class="field">
-          <label for="exercise">
-            Exercise
-            <span class="hint">minutes per day</span>
-          </label>
-          <input
-            id="exercise"
-            type="number"
-            min="0"
-            max="300"
-            step="5"
-            value="30"
-            required
-          />
-        </div>
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="housing" id="housingHome" value="0" data-label="Living at home" checked />
+            <label for="housingHome">
+              <span class="option-name">Living at home</span>
+              <span class="option-price">Free</span>
+            </label>
+          </div>
 
-        <div class="field">
-          <label for="screenTime">
-            Screen time
-            <span class="hint">recreational hours</span>
-          </label>
-          <input
-            id="screenTime"
-            type="number"
-            min="0"
-            max="24"
-            step="0.5"
-            value="4"
-            required
-          />
-        </div>
+          <div class="option">
+            <input type="radio" name="housing" id="housingRoom" value="600" data-label="Shared room" />
+            <label for="housingRoom">
+              <span class="option-name">Shared room</span>
+              <span class="option-price">$600 / month</span>
+            </label>
+          </div>
 
-        <div class="field full">
-          <label for="nutrition">
-            Nutrition quality
-            <span class="hint">how balanced your meals are</span>
-          </label>
+          <div class="option">
+            <input type="radio" name="housing" id="housingApartment" value="1000" data-label="One-person apartment" />
+            <label for="housingApartment">
+              <span class="option-name">One-person apartment</span>
+              <span class="option-price">$1,000 / month</span>
+            </label>
+          </div>
 
-          <div class="range-row">
-            <input
-              id="nutrition"
-              type="range"
-              min="1"
-              max="5"
-              value="3"
-              step="1"
-            />
-            <span class="range-value" id="nutritionValue">3 / 5</span>
+          <div class="option">
+            <input type="radio" name="housing" id="housingCouple" value="1400" data-label="Two-person apartment" />
+            <label for="housingCouple">
+              <span class="option-name">Two-person apartment</span>
+              <span class="option-price">$1,400 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="housing" id="housingLarge" value="2200" data-label="Large family home" />
+            <label for="housingLarge">
+              <span class="option-name">Large family home</span>
+              <span class="option-price">$2,200 / month</span>
+            </label>
           </div>
         </div>
-      </div>
+
+        <input class="custom-input" type="number" id="customHousing" min="0" placeholder="Or enter a custom housing cost" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          🛒 Food
+          <small>Groceries and meals</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="food" id="foodHome" value="250" data-label="Mostly cooking at home" checked />
+            <label for="foodHome">
+              <span class="option-name">Mostly cooking at home</span>
+              <span class="option-price">$250 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="food" id="foodBalanced" value="450" data-label="Balanced groceries and eating out" />
+            <label for="foodBalanced">
+              <span class="option-name">Balanced groceries and eating out</span>
+              <span class="option-price">$450 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="food" id="foodRestaurants" value="750" data-label="Frequent restaurants" />
+            <label for="foodRestaurants">
+              <span class="option-name">Frequent restaurants</span>
+              <span class="option-price">$750 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="food" id="foodPremium" value="1100" data-label="Premium food lifestyle" />
+            <label for="foodPremium">
+              <span class="option-name">Premium food lifestyle</span>
+              <span class="option-price">$1,100 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="food" id="foodFamily" value="1500" data-label="Large family groceries" />
+            <label for="foodFamily">
+              <span class="option-name">Large family groceries</span>
+              <span class="option-price">$1,500 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customFood" min="0" placeholder="Or enter a custom food cost" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          🚗 Transportation
+          <small>How do you get around?</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="transport" id="transportWalk" value="0" data-label="Walking or biking" checked />
+            <label for="transportWalk">
+              <span class="option-name">Walking or biking</span>
+              <span class="option-price">Free</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="transport" id="transportPublic" value="100" data-label="Public transportation" />
+            <label for="transportPublic">
+              <span class="option-name">Public transportation</span>
+              <span class="option-price">$100 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="transport" id="transportUsed" value="350" data-label="Used car" />
+            <label for="transportUsed">
+              <span class="option-name">Used car</span>
+              <span class="option-price">$350 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="transport" id="transportNew" value="700" data-label="New car" />
+            <label for="transportNew">
+              <span class="option-name">New car</span>
+              <span class="option-price">$700 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="transport" id="transportLuxury" value="1300" data-label="Luxury car" />
+            <label for="transportLuxury">
+              <span class="option-name">Luxury car</span>
+              <span class="option-price">$1,300 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customTransport" min="0" placeholder="Or enter a custom transportation cost" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          💡 Utilities
+          <small>Electricity, water, and heating</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="utilities" id="utilitiesIncluded" value="0" data-label="Included with housing" checked />
+            <label for="utilitiesIncluded">
+              <span class="option-name">Included with housing</span>
+              <span class="option-price">Free</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="utilities" id="utilitiesBasic" value="100" data-label="Basic utilities" />
+            <label for="utilitiesBasic">
+              <span class="option-name">Basic utilities</span>
+              <span class="option-price">$100 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="utilities" id="utilitiesAverage" value="180" data-label="Average utilities" />
+            <label for="utilitiesAverage">
+              <span class="option-name">Average utilities</span>
+              <span class="option-price">$180 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="utilities" id="utilitiesHigh" value="300" data-label="High utilities" />
+            <label for="utilitiesHigh">
+              <span class="option-name">High utilities</span>
+              <span class="option-price">$300 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="utilities" id="utilitiesLarge" value="450" data-label="Large home utilities" />
+            <label for="utilitiesLarge">
+              <span class="option-name">Large home utilities</span>
+              <span class="option-price">$450 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customUtilities" min="0" placeholder="Or enter a custom utility cost" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          📱 Phone and internet
+          <small>Communication services</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="phone" id="phoneNone" value="0" data-label="No personal plan" checked />
+            <label for="phoneNone">
+              <span class="option-name">No personal plan</span>
+              <span class="option-price">Free</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="phone" id="phoneBasic" value="50" data-label="Basic phone plan" />
+            <label for="phoneBasic">
+              <span class="option-name">Basic phone plan</span>
+              <span class="option-price">$50 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="phone" id="phoneStandard" value="100" data-label="Phone and home internet" />
+            <label for="phoneStandard">
+              <span class="option-name">Phone and home internet</span>
+              <span class="option-price">$100 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="phone" id="phonePremium" value="180" data-label="Premium phone and internet" />
+            <label for="phonePremium">
+              <span class="option-name">Premium phone and internet</span>
+              <span class="option-price">$180 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="phone" id="phoneFamily" value="250" data-label="Family plans" />
+            <label for="phoneFamily">
+              <span class="option-name">Family plans</span>
+              <span class="option-price">$250 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customPhone" min="0" placeholder="Or enter a custom phone and internet cost" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          🩺 Healthcare
+          <small>Insurance and medical expenses</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="healthcare" id="healthcareCovered" value="0" data-label="Fully covered" checked />
+            <label for="healthcareCovered">
+              <span class="option-name">Fully covered</span>
+              <span class="option-price">Free</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="healthcare" id="healthcareBasic" value="100" data-label="Basic coverage" />
+            <label for="healthcareBasic">
+              <span class="option-name">Basic coverage</span>
+              <span class="option-price">$100 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="healthcare" id="healthcareStandard" value="250" data-label="Standard coverage" />
+            <label for="healthcareStandard">
+              <span class="option-name">Standard coverage</span>
+              <span class="option-price">$250 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="healthcare" id="healthcarePremium" value="500" data-label="Premium coverage" />
+            <label for="healthcarePremium">
+              <span class="option-name">Premium coverage</span>
+              <span class="option-price">$500 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="healthcare" id="healthcareFamily" value="900" data-label="Family coverage" />
+            <label for="healthcareFamily">
+              <span class="option-name">Family coverage</span>
+              <span class="option-price">$900 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customHealthcare" min="0" placeholder="Or enter a custom healthcare cost" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          🎮 Entertainment
+          <small>Fun, subscriptions, and activities</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="entertainment" id="entertainmentFree" value="0" data-label="Free activities" checked />
+            <label for="entertainmentFree">
+              <span class="option-name">Free activities</span>
+              <span class="option-price">Free</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="entertainment" id="entertainmentBasic" value="50" data-label="Basic entertainment" />
+            <label for="entertainmentBasic">
+              <span class="option-name">Basic entertainment</span>
+              <span class="option-price">$50 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="entertainment" id="entertainmentRegular" value="150" data-label="Regular entertainment" />
+            <label for="entertainmentRegular">
+              <span class="option-name">Regular entertainment</span>
+              <span class="option-price">$150 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="entertainment" id="entertainmentSocial" value="350" data-label="Active social life" />
+            <label for="entertainmentSocial">
+              <span class="option-name">Active social life</span>
+              <span class="option-price">$350 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="entertainment" id="entertainmentLuxury" value="700" data-label="Luxury entertainment" />
+            <label for="entertainmentLuxury">
+              <span class="option-name">Luxury entertainment</span>
+              <span class="option-price">$700 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customEntertainment" min="0" placeholder="Or enter a custom entertainment cost" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          👕 Personal expenses
+          <small>Clothes, toiletries, and everyday items</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="personal" id="personalBasic" value="50" data-label="Very basic personal expenses" checked />
+            <label for="personalBasic">
+              <span class="option-name">Very basic</span>
+              <span class="option-price">$50 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="personal" id="personalSimple" value="150" data-label="Simple personal expenses" />
+            <label for="personalSimple">
+              <span class="option-name">Simple lifestyle</span>
+              <span class="option-price">$150 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="personal" id="personalAverage" value="300" data-label="Average personal expenses" />
+            <label for="personalAverage">
+              <span class="option-name">Average lifestyle</span>
+              <span class="option-price">$300 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="personal" id="personalComfortable" value="600" data-label="Comfortable lifestyle" />
+            <label for="personalComfortable">
+              <span class="option-name">Comfortable lifestyle</span>
+              <span class="option-price">$600 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="personal" id="personalLuxury" value="1200" data-label="Luxury personal expenses" />
+            <label for="personalLuxury">
+              <span class="option-name">Luxury lifestyle</span>
+              <span class="option-price">$1,200 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customPersonal" min="0" placeholder="Or enter a custom personal expense" />
+      </section>
+
+      <section class="category">
+        <h3 class="category-title">
+          💰 Savings and extras
+          <small>Money you want to save or spend on surprises</small>
+        </h3>
+
+        <div class="options">
+          <div class="option">
+            <input type="radio" name="savings" id="savingsNone" value="0" data-label="No extra savings" checked />
+            <label for="savingsNone">
+              <span class="option-name">No extra savings</span>
+              <span class="option-price">$0 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="savings" id="savingsBasic" value="100" data-label="Basic savings" />
+            <label for="savingsBasic">
+              <span class="option-name">Basic savings</span>
+              <span class="option-price">$100 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="savings" id="savingsSteady" value="300" data-label="Steady savings" />
+            <label for="savingsSteady">
+              <span class="option-name">Steady savings</span>
+              <span class="option-price">$300 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="savings" id="savingsStrong" value="700" data-label="Strong savings" />
+            <label for="savingsStrong">
+              <span class="option-name">Strong savings</span>
+              <span class="option-price">$700 / month</span>
+            </label>
+          </div>
+
+          <div class="option">
+            <input type="radio" name="savings" id="savingsGoal" value="1500" data-label="Aggressive savings goal" />
+            <label for="savingsGoal">
+              <span class="option-name">Aggressive savings goal</span>
+              <span class="option-price">$1,500 / month</span>
+            </label>
+          </div>
+        </div>
+
+        <input class="custom-input" type="number" id="customSavings" min="0" placeholder="Or enter a custom savings amount" />
+      </section>
 
       <div class="button-row">
-        <button class="primary-btn" type="submit">
-          Calculate my score
+        <button class="calculate-button" type="submit">
+          Calculate total cost
         </button>
-        <button class="secondary-btn" type="button" id="resetButton">
+
+        <button class="reset-button" type="button" id="resetButton">
           Reset
         </button>
       </div>
     </form>
   </div>
 
-  <aside class="card results-card">
-    <div class="card-title">
-      <span>✨</span>
-      <h2>Your results</h2>
+  <aside class="card summary-card">
+    <div class="section-heading">
+      <span>📊</span>
+      <h2>Your estimate</h2>
     </div>
 
-    <div class="score-circle" id="scoreCircle">
-      <div class="score-content">
-        <span class="score-number" id="scoreNumber">0</span>
-        <span class="score-label">out of 100</span>
-      </div>
+    <div class="total-box">
+      <span class="total-label">Estimated monthly cost</span>
+      <span class="total-amount" id="monthlyTotal">$0</span>
+      <span class="total-year" id="yearlyTotal">That is $0 per year</span>
     </div>
 
-    <p class="result-message" id="resultMessage">
-      Complete the form to see your lifestyle balance score.
-    </p>
-
-    <div class="breakdown">
-      <div class="metric">
-        <div class="metric-icon">😴</div>
-        <div>
-          <div class="metric-name">Sleep</div>
-          <div class="metric-status" id="sleepStatus">Not calculated</div>
-        </div>
-        <div class="metric-score" id="sleepScore">—</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-icon">💧</div>
-        <div>
-          <div class="metric-name">Hydration</div>
-          <div class="metric-status" id="waterStatus">Not calculated</div>
-        </div>
-        <div class="metric-score" id="waterScore">—</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-icon">🏃</div>
-        <div>
-          <div class="metric-name">Exercise</div>
-          <div class="metric-status" id="exerciseStatus">Not calculated</div>
-        </div>
-        <div class="metric-score" id="exerciseScore">—</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-icon">🥗</div>
-        <div>
-          <div class="metric-name">Nutrition</div>
-          <div class="metric-status" id="nutritionStatus">Not calculated</div>
-        </div>
-        <div class="metric-score" id="nutritionScore">—</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-icon">📱</div>
-        <div>
-          <div class="metric-name">Screen balance</div>
-          <div class="metric-status" id="screenStatus">Not calculated</div>
-        </div>
-        <div class="metric-score" id="screenScore">—</div>
-      </div>
+    <div id="summaryContent">
+      <p class="empty-message">
+        Choose your lifestyle options and click “Calculate total cost” to
+        see your estimate.
+      </p>
     </div>
 
-    <div class="tip-box" id="tipBox">
-      💡 Small, consistent improvements can make a meaningful difference
-      over time.
+    <div class="summary-note">
+      💡 These are example estimates. Costs vary by location, personal
+      choices, taxes, and household size.
     </div>
   </aside>
 </section>
 
 <footer>
-  This calculator is for general wellness information only and is not
-  medical advice.
+  For planning purposes only. This calculator is not financial advice.
 </footer>
 
   </main>
   <script>
-    const form = document.getElementById("lifestyleForm");
+    const form = document.getElementById("costForm");
     const resetButton = document.getElementById("resetButton");
-    const nutritionSlider = document.getElementById("nutrition");
-    const nutritionValue = document.getElementById("nutritionValue");
-    const scoreCircle = document.getElementById("scoreCircle");
-    const scoreNumber = document.getElementById("scoreNumber");
-    const resultMessage = document.getElementById("resultMessage");
-    const tipBox = document.getElementById("tipBox");
+    const currencySelect = document.getElementById("currency");
+    const monthlyTotal = document.getElementById("monthlyTotal");
+    const yearlyTotal = document.getElementById("yearlyTotal");
+    const summaryContent = document.getElementById("summaryContent");
 
-    nutritionSlider.addEventListener("input", () => {
-      nutritionValue.textContent = `${nutritionSlider.value} / 5`;
-    });
+    const categories = [
+      {
+        key: "housing",
+        label: "Housing",
+        customId: "customHousing"
+      },
+      {
+        key: "food",
+        label: "Food",
+        customId: "customFood"
+      },
+      {
+        key: "transport",
+        label: "Transportation",
+        customId: "customTransport"
+      },
+      {
+        key: "utilities",
+        label: "Utilities",
+        customId: "customUtilities"
+      },
+      {
+        key: "phone",
+        label: "Phone and internet",
+        customId: "customPhone"
+      },
+      {
+        key: "healthcare",
+        label: "Healthcare",
+        customId: "customHealthcare"
+      },
+      {
+        key: "entertainment",
+        label: "Entertainment",
+        customId: "customEntertainment"
+      },
+      {
+        key: "personal",
+        label: "Personal expenses",
+        customId: "customPersonal"
+      },
+      {
+        key: "savings",
+        label: "Savings and extras",
+        customId: "customSavings"
+      }
+    ];
 
-    function limitScore(value) {
-      return Math.max(0, Math.min(100, Math.round(value)));
+    function getCurrency() {
+      return currencySelect.value;
     }
 
-    function getStatus(score) {
-      if (score >= 85) return "Excellent";
-      if (score >= 70) return "Good";
-      if (score >= 50) return "Could improve";
-      return "Needs attention";
+    function formatMoney(amount) {
+      return `${getCurrency()}${amount.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      })}`;
     }
 
-    function sleepScore(hours) {
-      if (hours >= 7 && hours <= 9) return 100;
-      if (hours >= 6 && hours < 7) return 78;
-      if (hours > 9 && hours <= 10) return 82;
-      if (hours >= 5 && hours < 6) return 55;
-      if (hours > 10 && hours <= 12) return 60;
-      return 35;
-    }
+    function getSelectedOption(categoryKey) {
+      const selected = document.querySelector(
+        `input[name="${categoryKey}"]:checked`
+      );
 
-    function waterScore(glasses) {
-      return limitScore((glasses / 8) * 100);
-    }
-
-    function exerciseScore(minutes) {
-      return limitScore((minutes / 30) * 100);
-    }
-
-    function nutritionScore(rating) {
-      return limitScore((rating / 5) * 100);
-    }
-
-    function screenScore(hours) {
-      if (hours <= 2) return 100;
-      if (hours <= 4) return 82;
-      if (hours <= 6) return 65;
-      if (hours <= 8) return 45;
-      return 25;
-    }
-
-    function updateMetric(name, score) {
-      document.getElementById(`${name}Score`).textContent = `${score}`;
-      document.getElementById(`${name}Status`).textContent = getStatus(score);
-    }
-
-    function getOverallMessage(score) {
-      if (score >= 85) {
-        return "Excellent balance! Your daily habits are supporting a strong lifestyle foundation.";
+      if (!selected) {
+        return {
+          amount: 0,
+          label: "Not selected"
+        };
       }
 
-      if (score >= 70) {
-        return "Good work! You have a healthy foundation with a few areas that could become even stronger.";
-      }
-
-      if (score >= 50) {
-        return "You are making progress. Focus on improving one or two habits consistently.";
-      }
-
-      return "Start small and build momentum. Choose one lifestyle area to improve this week.";
-    }
-
-    function getTip(scores) {
-      const lowest = Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
-
-      const tips = {
-        sleep: "💡 Try keeping a consistent bedtime and limiting caffeine late in the day.",
-        water: "💡 Keep a reusable water bottle nearby and drink a glass with each meal.",
-        exercise: "💡 Add a short walk, stretch, or bodyweight routine to your daily schedule.",
-        nutrition: "💡 Add more colorful fruits and vegetables to your meals.",
-        screen: "💡 Try taking regular screen breaks and keeping devices away before bed."
+      return {
+        amount: Number(selected.value),
+        label: selected.dataset.label
       };
+    }
 
-      return tips[lowest];
+    function getCategoryValue(category) {
+      const customInput = document.getElementById(category.customId);
+      const customValue = Number(customInput.value);
+
+      if (customInput.value.trim() !== "" && customValue >= 0) {
+        return {
+          amount: customValue,
+          label: "Custom amount"
+        };
+      }
+
+      return getSelectedOption(category.key);
+    }
+
+    function calculateCosts() {
+      const results = categories.map((category) => {
+        const result = getCategoryValue(category);
+
+        return {
+          label: category.label,
+          amount: result.amount,
+          choice: result.label
+        };
+      });
+
+      const total = results.reduce((sum, item) => sum + item.amount, 0);
+      const yearly = total * 12;
+
+      monthlyTotal.textContent = formatMoney(total);
+      yearlyTotal.textContent = `That is ${formatMoney(yearly)} per year`;
+
+      summaryContent.innerHTML = `
+        <div class="summary-list">
+          ${results
+            .map(
+              (item) => `
+                <div class="summary-line">
+                  <span>${item.label}</span>
+                  <strong>${formatMoney(item.amount)}</strong>
+                </div>
+                <div style="font-size: 0.75rem; color: #6a776f; margin-top: -6px; margin-bottom: 3px;">
+                  ${item.choice}
+                </div>
+              `
+            )
+            .join("")}
+        </div>
+      `;
     }
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
+      calculateCosts();
+    });
 
-      const sleep = Number(document.getElementById("sleep").value);
-      const water = Number(document.getElementById("water").value);
-      const exercise = Number(document.getElementById("exercise").value);
-      const screenTime = Number(document.getElementById("screenTime").value);
-      const nutrition = Number(document.getElementById("nutrition").value);
-
-      const scores = {
-        sleep: sleepScore(sleep),
-        water: waterScore(water),
-        exercise: exerciseScore(exercise),
-        nutrition: nutritionScore(nutrition),
-        screen: screenScore(screenTime)
-      };
-
-      const overall = Math.round(
-        (scores.sleep +
-          scores.water +
-          scores.exercise +
-          scores.nutrition +
-          scores.screen) /
-          5
-      );
-
-      updateMetric("sleep", scores.sleep);
-      updateMetric("water", scores.water);
-      updateMetric("exercise", scores.exercise);
-      updateMetric("nutrition", scores.nutrition);
-      updateMetric("screen", scores.screen);
-
-      scoreNumber.textContent = overall;
-      scoreCircle.style.background = `conic-gradient(
-        var(--primary) ${overall}%,
-        #e4eee7 ${overall}%
-      )`;
-
-      resultMessage.textContent = getOverallMessage(overall);
-      tipBox.textContent = getTip(scores);
+    currencySelect.addEventListener("change", () => {
+      calculateCosts();
     });
 
     resetButton.addEventListener("click", () => {
       form.reset();
-      nutritionValue.textContent = "3 / 5";
 
-      scoreNumber.textContent = "0";
-      scoreCircle.style.background =
-        "conic-gradient(var(--primary) 0%, #e4eee7 0%)";
-
-      resultMessage.textContent =
-        "Complete the form to see your lifestyle balance score.";
-
-      tipBox.textContent =
-        "💡 Small, consistent improvements can make a meaningful difference over time.";
-
-      ["sleep", "water", "exercise", "nutrition", "screen"].forEach((name) => {
-        document.getElementById(`${name}Score`).textContent = "—";
-        document.getElementById(`${name}Status`).textContent = "Not calculated";
+      document.querySelectorAll(".custom-input").forEach((input) => {
+        input.value = "";
       });
+
+      monthlyTotal.textContent = formatMoney(0);
+      yearlyTotal.textContent = `That is ${formatMoney(0)} per year`;
+
+      summaryContent.innerHTML = `
+        <p class="empty-message">
+          Choose your lifestyle options and click “Calculate total cost” to
+          see your estimate.
+        </p>
+      `;
     });
   </script>
 </body>
